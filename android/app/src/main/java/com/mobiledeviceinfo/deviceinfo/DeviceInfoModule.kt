@@ -1,5 +1,6 @@
 package com.mobiledeviceinfo.deviceinfo
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -19,6 +20,22 @@ import java.net.InetAddress
 
 class DeviceInfoModule(reactContext: ReactApplicationContext) :
     NativeMobileDeviceInfoSpec(reactContext) {
+
+  private val batteryReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+      emitOnBatteryLevelChanged(batteryInfoFromIntent(intent))
+    }
+  }
+
+  override fun initialize() {
+    super.initialize()
+    reactApplicationContext.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+  }
+
+  override fun invalidate() {
+    super.invalidate()
+    reactApplicationContext.unregisterReceiver(batteryReceiver)
+  }
 
   override fun getName() = NAME
 
@@ -50,10 +67,14 @@ class DeviceInfoModule(reactContext: ReactApplicationContext) :
   }
 
   private fun getBatteryInfo(): WritableMap {
-    val map = Arguments.createMap()
     val intent = reactApplicationContext.registerReceiver(
       null, IntentFilter(Intent.ACTION_BATTERY_CHANGED)
     )
+    return batteryInfoFromIntent(intent)
+  }
+
+  private fun batteryInfoFromIntent(intent: Intent?): WritableMap {
+    val map = Arguments.createMap()
     val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
     val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
     val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1

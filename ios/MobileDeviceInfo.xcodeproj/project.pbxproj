@@ -11,8 +11,8 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		83E0200385FD04089302A8BC /* DeviceInfoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = E125EB750C2C4D309D8E3622 /* DeviceInfoModule.swift */; };
-		D82AF7D14E5EDA2ACA6A08CB /* DeviceInfoModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7960016FB7A79E76CCA3DCF3 /* DeviceInfoModule.mm */; };
+		DFF119DF3048BE6300FF7E29 /* DeviceInfoModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFF119DE3048BE6300FF7E29 /* DeviceInfoModule.mm */; };
+		DFF119E13048BF5C00FF7E29 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFF119E03048BF5C00FF7E29 /* CoreTelephony.framework */; };
 		FD7C23BB0C29788B89FEBBCE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -25,9 +25,10 @@
 		5709B34CF0A7D63546082F79 /* Pods-MobileDeviceInfo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileDeviceInfo.release.xcconfig"; path = "Target Support Files/Pods-MobileDeviceInfo/Pods-MobileDeviceInfo.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-MobileDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileDeviceInfo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MobileDeviceInfo/AppDelegate.swift; sourceTree = "<group>"; };
-		7960016FB7A79E76CCA3DCF3 /* DeviceInfoModule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DeviceInfoModule.mm; path = MobileDeviceInfo/DeviceInfoModule.mm; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MobileDeviceInfo/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		E125EB750C2C4D309D8E3622 /* DeviceInfoModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceInfoModule.swift; path = MobileDeviceInfo/DeviceInfoModule.swift; sourceTree = "<group>"; };
+		DFF119DD3048BE6300FF7E29 /* DeviceInfoModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeviceInfoModule.h; path = MobileDeviceInfo/DeviceInfoModule.h; sourceTree = "<group>"; };
+		DFF119DE3048BE6300FF7E29 /* DeviceInfoModule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DeviceInfoModule.mm; path = MobileDeviceInfo/DeviceInfoModule.mm; sourceTree = "<group>"; };
+		DFF119E03048BF5C00FF7E29 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -36,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFF119E13048BF5C00FF7E29 /* CoreTelephony.framework in Frameworks */,
 				0C80B921A6F3F58F76C31292 /* libPods-MobileDeviceInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,9 +50,9 @@
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
-				E125EB750C2C4D309D8E3622 /* DeviceInfoModule.swift */,
-				7960016FB7A79E76CCA3DCF3 /* DeviceInfoModule.mm */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				DFF119DD3048BE6300FF7E29 /* DeviceInfoModule.h */,
+				DFF119DE3048BE6300FF7E29 /* DeviceInfoModule.mm */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
@@ -60,6 +62,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DFF119E03048BF5C00FF7E29 /* CoreTelephony.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-MobileDeviceInfo.a */,
 			);
@@ -137,7 +140,7 @@
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 2660;
 					};
 				};
 			};
@@ -197,9 +200,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MobileDeviceInfo/Pods-MobileDeviceInfo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MobileDeviceInfo/Pods-MobileDeviceInfo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -236,9 +243,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MobileDeviceInfo/Pods-MobileDeviceInfo-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MobileDeviceInfo/Pods-MobileDeviceInfo-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -253,8 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
-				83E0200385FD04089302A8BC /* DeviceInfoModule.swift in Sources */,
-				D82AF7D14E5EDA2ACA6A08CB /* DeviceInfoModule.mm in Sources */,
+				DFF119DF3048BE6300FF7E29 /* DeviceInfoModule.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
