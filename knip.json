@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["specs/**/*.ts", "__tests__/**/*.test.tsx"],
+  "entry": ["specs/*.{ts,tsx}", "__tests__/*.{ts,tsx}"],
   "project": ["**/*.{ts,tsx}"],
   "ignoreDependencies": ["@babel/preset-env", "@babel/runtime"]
 }
