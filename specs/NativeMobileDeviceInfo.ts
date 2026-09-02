@@ -3,7 +3,7 @@ import { TurboModuleRegistry } from "react-native";
 
 
 // device hardware info
-export interface HardwareInfo {
+interface HardwareInfo {
     model: string;
     manufacturer: string;
     osName: string;
@@ -15,27 +15,27 @@ export interface HardwareInfo {
 
 
 // device battery info
-export interface BatteryInfo {
+interface BatteryInfo {
     level: number;
     isCharging: boolean;
 }
 
 
 // device storage info
-export interface StorageInfo {
+interface StorageInfo {
     totalStorage: number; // bytes
     freeStorage: number; // bytes
 }
 
 // device network info
-export interface NetworkInfo {
+interface NetworkInfo {
     ipAddress: string;
     connectionType: string;
     carrierName: string;
 }
 
 // device app info
-export interface AppInfo {
+interface AppInfo {
   appVersion: string;
   buildNumber: string;
   bundleId: string;
@@ -51,7 +51,7 @@ export interface NativeDeviceInfoResult {
     app: AppInfo;
 }
 
-export interface Spec extends TurboModule {
+interface Spec extends TurboModule {
     getDeviceInfo: () => Promise<NativeDeviceInfoResult>;
 }
 
