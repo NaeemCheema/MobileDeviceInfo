@@ -21,8 +21,17 @@ import java.net.InetAddress
 class DeviceInfoModule(reactContext: ReactApplicationContext) :
     NativeMobileDeviceInfoSpec(reactContext) {
 
+  // registerReceiver() immediately redelivers the last sticky ACTION_BATTERY_CHANGED
+  // intent to a newly registered receiver. Suppress that first, synthetic delivery so
+  // we only emit for genuine battery changes after registration.
+  private var hasSkippedInitialStickyBroadcast = false
+
   private val batteryReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+      if (!hasSkippedInitialStickyBroadcast) {
+        hasSkippedInitialStickyBroadcast = true
+        return
+      }
       emitOnBatteryLevelChanged(batteryInfoFromIntent(intent))
     }
   }
@@ -34,7 +43,13 @@ class DeviceInfoModule(reactContext: ReactApplicationContext) :
 
   override fun invalidate() {
     super.invalidate()
-    reactApplicationContext.unregisterReceiver(batteryReceiver)
+    try {
+      reactApplicationContext.unregisterReceiver(batteryReceiver)
+    } catch (e: IllegalArgumentException) {
+      // batteryReceiver was never registered (initialize() didn't run or
+      // already failed) or invalidate() was called more than once - ignore,
+      // there is nothing to unregister.
+    }
   }
 
   override fun getName() = NAME

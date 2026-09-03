@@ -36,6 +36,7 @@ RCT_EXPORT_MODULE(MobileDeviceInfo)
 - (void)invalidate
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+  UIDevice.currentDevice.batteryMonitoringEnabled = NO;
 }
 
 - (void)batteryStatusDidChange:(NSNotification *)notification
@@ -53,12 +54,18 @@ RCT_EXPORT_MODULE(MobileDeviceInfo)
 
 - (void)getDeviceInfo:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
+  // hardwareInfo/batteryInfo/appInfo read UIKit state (UIScreen, UIDevice) which
+  // must only be accessed from the main thread. This module doesn't implement
+  // -methodQueue, so RCTTurboModuleManager dispatches method calls on its own
+  // private background queue by default - hop to main explicitly.
+  dispatch_async(dispatch_get_main_queue(), ^{
   resolve(@{
     @"hardware" : [self hardwareInfo],
     @"battery" : [self batteryInfo],
     @"storage" : [self storageInfo],
     @"network" : [self networkInfo],
     @"app" : [self appInfo],
+  });
   });
 }
 
