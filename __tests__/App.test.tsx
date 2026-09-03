@@ -21,7 +21,11 @@ jest.mock('../specs/NativeMobileDeviceInfo', () => ({
       },
       battery: { level: 0.5, isCharging: false },
       storage: { totalStorage: 128000000000, freeStorage: 64000000000 },
-      network: { ipAddress: '192.168.1.1', connectionType: 'wifi', carrierName: '' },
+      network: {
+        ipAddress: '192.168.1.1',
+        connectionType: 'wifi',
+        carrierName: '',
+      },
       app: {
         appVersion: '1.0.0',
         buildNumber: '1',
@@ -29,6 +33,7 @@ jest.mock('../specs/NativeMobileDeviceInfo', () => ({
         deviceId: 'test-device-id',
       },
     }),
+    onBatteryLevelChanged: jest.fn(() => ({ remove: jest.fn() })),
   },
 }));
 

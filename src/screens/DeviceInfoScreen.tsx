@@ -116,6 +116,15 @@ export default function DeviceInfoScreen() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    const subscription = NativeMobileDeviceInfo.onBatteryLevelChanged(
+      battery => {
+        setInfo(current => (current ? { ...current, battery } : current));
+      },
+    );
+    return () => subscription.remove();
+  }, []);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await load();
