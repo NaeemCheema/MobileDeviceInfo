@@ -59,13 +59,13 @@ RCT_EXPORT_MODULE(MobileDeviceInfo)
   // -methodQueue, so RCTTurboModuleManager dispatches method calls on its own
   // private background queue by default - hop to main explicitly.
   dispatch_async(dispatch_get_main_queue(), ^{
-  resolve(@{
-    @"hardware" : [self hardwareInfo],
-    @"battery" : [self batteryInfo],
-    @"storage" : [self storageInfo],
-    @"network" : [self networkInfo],
-    @"app" : [self appInfo],
-  });
+    resolve(@{
+      @"hardware" : [self hardwareInfo],
+      @"battery" : [self batteryInfo],
+      @"storage" : [self storageInfo],
+      @"network" : [self networkInfo],
+      @"app" : [self appInfo],
+    });
   });
 }
 
@@ -79,8 +79,8 @@ RCT_EXPORT_MODULE(MobileDeviceInfo)
     @"manufacturer" : @"Apple",
     @"osName" : UIDevice.currentDevice.systemName,
     @"osVersion" : UIDevice.currentDevice.systemVersion,
-    @"screenWidth" : @(screen.bounds.size.width * screen.scale),
-    @"screenHeight" : @(screen.bounds.size.height * screen.scale),
+    @"screenWidth" : @((NSInteger)(screen.bounds.size.width * screen.scale)),
+    @"screenHeight" : @((NSInteger)(screen.bounds.size.height * screen.scale)),
     @"screenDensity" : @(screen.scale),
   };
 }
