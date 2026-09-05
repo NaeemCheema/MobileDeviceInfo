@@ -1,4 +1,4 @@
-export const lightColors = {
+const lightColors = {
   background: '#F2F2F7',
   card: '#FFFFFF',
   text: '#1C1C1E',
@@ -9,7 +9,7 @@ export const lightColors = {
   success: '#34C759',
 };
 
-export const darkColors = {
+const darkColors = {
   background: '#000000',
   card: '#1C1C1E',
   text: '#FFFFFF',

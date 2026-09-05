@@ -14,7 +14,7 @@ import DeviceInfoScreen from './src/screens/DeviceInfoScreen';
 import DatePickerScreen from './src/screens/DatePickerScreen';
 import { getThemeColors } from './src/theme/colors';
 
-export type RootStackParamList = {
+type RootStackParamList = {
   DeviceInfo: undefined;
   DatePicker: undefined;
 };
