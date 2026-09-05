@@ -15,6 +15,7 @@ class MainApplication : Application(), ReactApplication {
       packageList =
         PackageList(this).packages.apply {
           add(com.mobiledeviceinfo.deviceinfo.DeviceInfoPackage())
+          add(com.mobiledeviceinfo.datepicker.DatePickerPackage())
         },
     )
   }

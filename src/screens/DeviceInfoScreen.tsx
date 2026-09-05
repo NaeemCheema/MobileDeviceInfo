@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -12,92 +12,127 @@ import NativeMobileDeviceInfo, {
   NativeDeviceInfoResult,
 } from '../../specs/NativeMobileDeviceInfo';
 import { formatBytes, formatPercent } from '../nativeDeviceInfo/formatters';
+import type { RootStackScreenProps } from '../../App';
+import { cardShadow, getThemeColors, ThemeColors } from '../theme/colors';
+import Button from '../components/Button';
 
 type Row = { label: string; value: string };
+type Section = { id: string; icon: string; title: string; rows: Row[] };
 
-function Card({
-  title,
-  rows,
-  isDarkMode,
-}: {
-  title: string;
-  rows: Row[];
-  isDarkMode: boolean;
-}) {
+function BatteryBar({ level, colors }: { level: number; colors: ThemeColors }) {
+  if (!Number.isFinite(level) || level < 0) {
+    return null;
+  }
+  const pct = Math.max(0, Math.min(1, level));
+  const barColor = pct <= 0.2 ? colors.danger : colors.success;
   return (
-    <View
-      style={[styles.card, isDarkMode ? styles.cardDark : styles.cardLight]}
-    >
-      <Text style={[styles.cardTitle, isDarkMode && styles.textDark]}>
-        {title}
-      </Text>
-      {rows.map(row => (
-        <View key={row.label} style={styles.row}>
-          <Text style={[styles.rowLabel, isDarkMode && styles.textDarkMuted]}>
-            {row.label}
-          </Text>
-          <Text style={[styles.rowValue, isDarkMode && styles.textDark]}>
-            {row.value}
-          </Text>
-        </View>
-      ))}
+    <View style={[styles.batteryTrack, { backgroundColor: colors.border }]}>
+      <View
+        style={[
+          styles.batteryFill,
+          { width: `${pct * 100}%`, backgroundColor: barColor },
+        ]}
+      />
     </View>
   );
 }
 
-const buildCards = (
-  info: NativeDeviceInfoResult,
-): { title: string; rows: Row[] }[] => {
-  return [
-    {
-      title: 'Hardware',
-      rows: [
-        { label: 'Model', value: info.hardware.model },
-        { label: 'Manufacturer', value: info.hardware.manufacturer },
-        {
-          label: 'OS',
-          value: `${info.hardware.osName} ${info.hardware.osVersion}`,
-        },
-        {
-          label: 'Screen',
-          value: `${info.hardware.screenWidth}x${info.hardware.screenHeight} @${info.hardware.screenDensity}x`,
-        },
-      ],
-    },
-    {
-      title: 'Battery & Storage',
-      rows: [
-        { label: 'Battery level', value: formatPercent(info.battery.level) },
-        { label: 'Charging', value: info.battery.isCharging ? 'Yes' : 'No' },
-        {
-          label: 'Total storage',
-          value: formatBytes(info.storage.totalStorage),
-        },
-        { label: 'Free storage', value: formatBytes(info.storage.freeStorage) },
-      ],
-    },
-    {
-      title: 'Network',
-      rows: [
-        { label: 'Connection', value: info.network.connectionType },
-        { label: 'IP address', value: info.network.ipAddress || 'Unknown' },
-        { label: 'Carrier', value: info.network.carrierName || 'Unavailable' },
-      ],
-    },
-    {
-      title: 'App & Identifiers',
-      rows: [
-        { label: 'App version', value: info.app.appVersion },
-        { label: 'Build number', value: info.app.buildNumber },
-        { label: 'Bundle ID', value: info.app.bundleId },
-        { label: 'Device ID', value: info.app.deviceId },
-      ],
-    },
-  ];
-};
+function Card({
+  section,
+  colors,
+  footer,
+}: {
+  section: Section;
+  colors: ThemeColors;
+  footer?: React.ReactNode;
+}) {
+  return (
+    <View style={[styles.card, cardShadow, { backgroundColor: colors.card }]}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardIcon}>{section.icon}</Text>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          {section.title}
+        </Text>
+      </View>
+      {section.rows.map((row, index) => (
+        <View
+          key={row.label}
+          style={[
+            styles.row,
+            index > 0 && { borderTopWidth: StyleSheet.hairlineWidth },
+            { borderTopColor: colors.border },
+          ]}
+        >
+          <Text style={[styles.rowLabel, { color: colors.textMuted }]}>
+            {row.label}
+          </Text>
+          <Text style={[styles.rowValue, { color: colors.text }]}>
+            {row.value}
+          </Text>
+        </View>
+      ))}
+      {footer}
+    </View>
+  );
+}
 
-export default function DeviceInfoScreen() {
+const buildSections = (info: NativeDeviceInfoResult): Section[] => [
+  {
+    id: 'hardware',
+    icon: '🖥️',
+    title: 'Hardware',
+    rows: [
+      { label: 'Model', value: info.hardware.model },
+      { label: 'Manufacturer', value: info.hardware.manufacturer },
+      {
+        label: 'OS',
+        value: `${info.hardware.osName} ${info.hardware.osVersion}`,
+      },
+      {
+        label: 'Screen',
+        value: `${info.hardware.screenWidth}x${info.hardware.screenHeight} @${info.hardware.screenDensity}x`,
+      },
+    ],
+  },
+  {
+    id: 'battery',
+    icon: '🔋',
+    title: 'Battery & Storage',
+    rows: [
+      { label: 'Battery level', value: formatPercent(info.battery.level) },
+      { label: 'Charging', value: info.battery.isCharging ? 'Yes' : 'No' },
+      { label: 'Total storage', value: formatBytes(info.storage.totalStorage) },
+      { label: 'Free storage', value: formatBytes(info.storage.freeStorage) },
+    ],
+  },
+  {
+    id: 'network',
+    icon: '🌐',
+    title: 'Network',
+    rows: [
+      { label: 'Connection', value: info.network.connectionType },
+      { label: 'IP address', value: info.network.ipAddress || 'Unknown' },
+      { label: 'Carrier', value: info.network.carrierName || 'Unavailable' },
+    ],
+  },
+  {
+    id: 'app',
+    icon: '📦',
+    title: 'App & Identifiers',
+    rows: [
+      { label: 'App version', value: info.app.appVersion },
+      { label: 'Build number', value: info.app.buildNumber },
+      { label: 'Bundle ID', value: info.app.bundleId },
+      { label: 'Device ID', value: info.app.deviceId },
+    ],
+  },
+];
+
+export default function DeviceInfoScreen({
+  navigation,
+}: RootStackScreenProps<'DeviceInfo'>) {
   const isDarkMode = useColorScheme() === 'dark';
+  const colors = useMemo(() => getThemeColors(isDarkMode), [isDarkMode]);
   const [info, setInfo] = useState<NativeDeviceInfoResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -133,101 +168,153 @@ export default function DeviceInfoScreen() {
 
   return (
     <SafeAreaView
-      style={isDarkMode ? styles.screenDark : styles.screenLight}
-      edges={['top', 'bottom', 'left', 'right']}
+      style={[styles.screen, { backgroundColor: colors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={colors.card}
+          />
         }
       >
-        <Text style={[styles.title, isDarkMode && styles.textDark]}>
-          Device Info
-        </Text>
+        {info && (
+          <View style={styles.hero}>
+            <Text style={styles.heroEmoji}>📱</Text>
+            <Text style={[styles.heroTitle, { color: colors.text }]}>
+              {info.hardware.model}
+            </Text>
+            <Text style={[styles.heroSubtitle, { color: colors.textMuted }]}>
+              {info.hardware.osName} {info.hardware.osVersion}
+            </Text>
+          </View>
+        )}
+
         {error && (
-          <Text style={styles.error} testID="device-info-error">
+          <Text
+            style={[styles.error, { color: colors.danger }]}
+            testID="device-info-error"
+          >
             {error}
           </Text>
         )}
+
         {!info && !error && (
           <Text
-            style={[styles.rowValue, isDarkMode && styles.textDark]}
+            style={[styles.loading, { color: colors.textMuted }]}
             testID="device-info-loading"
           >
             Loading…
           </Text>
         )}
+
         {info &&
-          buildCards(info).map(card => (
+          buildSections(info).map(section => (
             <Card
-              key={card.title}
-              title={card.title}
-              rows={card.rows}
-              isDarkMode={isDarkMode}
+              key={section.id}
+              section={section}
+              colors={colors}
+              footer={
+                section.id === 'battery' ? (
+                  <BatteryBar level={info.battery.level} colors={colors} />
+                ) : undefined
+              }
             />
           ))}
+
+        <Button
+          label="Open Date Picker"
+          icon="📅"
+          onPress={() => navigation.navigate('DatePicker')}
+          colors={colors}
+          variant="primary"
+          testID="open-date-picker"
+        />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screenLight: {
+  screen: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
-  },
-  screenDark: {
-    flex: 1,
-    backgroundColor: '#000000',
   },
   content: {
     padding: 16,
+    paddingBottom: 32,
   },
-  title: {
-    fontSize: 28,
+  hero: {
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 24,
+  },
+  heroEmoji: {
+    fontSize: 40,
+    marginBottom: 8,
+  },
+  heroTitle: {
+    fontSize: 22,
     fontWeight: '700',
-    marginBottom: 16,
+  },
+  heroSubtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
   card: {
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 14,
   },
-  cardLight: {
-    backgroundColor: '#FFFFFF',
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
   },
-  cardDark: {
-    backgroundColor: '#1C1C1E',
+  cardIcon: {
+    fontSize: 18,
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
+    fontWeight: '700',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 4,
+    paddingVertical: 8,
   },
   rowLabel: {
     fontSize: 14,
-    color: '#6E6E73',
   },
   rowValue: {
     fontSize: 14,
     fontWeight: '500',
     flexShrink: 1,
     textAlign: 'right',
+    marginLeft: 12,
+  },
+  batteryTrack: {
+    height: 6,
+    borderRadius: 3,
+    marginTop: 8,
+    overflow: 'hidden',
+  },
+  batteryFill: {
+    height: '100%',
+    borderRadius: 3,
   },
   error: {
-    color: '#FF3B30',
     marginBottom: 12,
+    fontSize: 14,
   },
-  textDark: {
-    color: '#FFFFFF',
-  },
-  textDarkMuted: {
-    color: '#98989D',
+  loading: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 24,
   },
 });
