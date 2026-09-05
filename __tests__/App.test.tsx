@@ -37,6 +37,11 @@ jest.mock('../specs/NativeMobileDeviceInfo', () => ({
   },
 }));
 
+jest.mock('../specs/NativeDatePicker', () => ({
+  __esModule: true,
+  default: { open: jest.fn() },
+}));
+
 test('renders correctly', async () => {
   await ReactTestRenderer.act(() => {
     ReactTestRenderer.create(<App />);
